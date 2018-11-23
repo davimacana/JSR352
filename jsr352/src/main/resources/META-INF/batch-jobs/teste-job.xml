@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<job id="teste-job" xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/jobXML_1_0.xsd"
+         version="1.0">
+
+	<step id="testando-job1" next="testando-job2">
+		<batchlet ref="BatchletImpl" />
+	</step>
+	
+	<step id="testando-job2" allow-start-if-complete="true">
+		<chunk> <!-- item-count="5"> -->
+			<reader ref="ChunkReader">
+				<properties>
+                    <property name="qtdPropostas" value="#{partitionPlan['qtdPropostas']}"  />
+                    <property name="idParceria" value="#{partitionPlan['idParceria']}"  />
+                </properties>
+			</reader>            
+			<processor ref="ChunkProcessor" />
+			<writer ref="ChunkWriter" />					
+		</chunk>	
+		<partition>
+			<mapper ref="ChunkPartitionMapper" />
+		</partition>
+	</step>
+	
+</job>
